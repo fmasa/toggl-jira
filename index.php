@@ -2,6 +2,12 @@
 
 use GuzzleHttp\Client;
 
+if(!isset($_GET['token']) || $_GET['token'] != getenv('SECURITY_TOKEN')) {
+	http_response_code(401);
+	echo 'Unauthorized';
+	exit;
+}
+
 require_once __DIR__ . '/vendor/autoload.php';
 
 $togglToken = getenv('TOGGL_TOKEN');
