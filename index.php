@@ -78,7 +78,7 @@ foreach ($issueEntries as $issueKey => $entries) {
 	}
 
 	foreach ($entries as $entry) {
-		list($entryId, $duration) = [$entry->id, $entry->duration];
+		list($entryId, $duration, $started) = [$entry->id, $entry->duration, $entry->start];
 
 		if(in_array($entryId, $loggedEntries)) {
 			// Skip already logged entries
@@ -89,7 +89,8 @@ foreach ($issueEntries as $issueKey => $entries) {
 		$jiraClient->post('issue/' . $issueKey . '/worklog', [
 			'json' => [
 				'timeSpentSeconds' => $duration,
-				'comment' => "Autologged from Toggl (#$entryId)"
+				'comment' => "Autologged from Toggl (#$entryId)",
+				'started' => DateTime::createFromFormat('Y-m-d\TH:i:sP', $started)->format('Y-m-d\TH:i:s.000O')
 			]
 		]);
 		echo "Logged #$entryId in issue <a target='_blank' href='$jiraHost/browse/$issueKey'>$issueKey</a>...<br>";
