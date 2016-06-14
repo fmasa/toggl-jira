@@ -1,0 +1,14 @@
+{
+    "name": "fmasa/toggl-jira",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "František Maša",
+            "email": "frantisekmasa1@gmail.com"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "^6.2"
+    }
+}
