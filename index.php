@@ -86,10 +86,13 @@ foreach ($issueEntries as $issueKey => $entries) {
 			continue;
 		}
 
+		$comment = (isset($entry->description) ? $entry->description : '') ." (Toggl #$entryId)";
+		$comment = trim($comment);
+
 		$jiraClient->post('issue/' . $issueKey . '/worklog', [
 			'json' => [
 				'timeSpentSeconds' => $duration,
-				'comment' => "Autologged from Toggl (#$entryId)",
+				'comment' => $comment,
 				'started' => DateTime::createFromFormat('Y-m-d\TH:i:sP', $started)->format('Y-m-d\TH:i:s.000O')
 			]
 		]);
