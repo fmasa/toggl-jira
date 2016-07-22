@@ -55,7 +55,7 @@ foreach ($entries as $entry) {
 	}
 }
 
-$jiraHost = 'https://egenteam.atlassian.net';
+$jiraHost = getenv('JIRA_HOST');
 
 $jiraClient = new Client([
 	'base_uri' => $jiraHost.'/rest/api/2/',
