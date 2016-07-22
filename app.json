@@ -1,0 +1,27 @@
+{
+	"name": "Toggl → JIRA worklogs",
+	"description": "Simple app to sync Toggl time entries with JIRA worklogs.",
+	"repository": "https://github.com/fmasa/toggl-jira",
+	"keywords": ["Toggl", "JIRA", "productivity", "time tracking"],
+	"env": {
+		"JIRA_HOST": {
+			"description": "JIRA host for your organization (including https://)."
+		},
+		"JIRA_USERNAME": {
+			"description": "Your JIRA username."
+		},
+		"JIRA_PASSWORD": {
+			"description": "Your JIRA password."
+		},
+		"SECURITY_TOKEN": {
+			"description": "Token used for app authorization.",
+			"generator": "secret"
+		},
+		"TOGGL_CLIENT_ID": {
+			"description": "Your client ID in Toggl."
+		},
+		"TOGGL_TOKEN": {
+			"description": "Your auth token for Toggl."
+		}
+	}
+}
