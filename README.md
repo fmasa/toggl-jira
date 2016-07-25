@@ -25,7 +25,7 @@ You can use environment variables to configure app with your Toggl and JIRA cred
 - **TOGGL_TOKEN** - Your auth token for Toggl.
 
 ## How can I sync those entries to JIRA?
-Because Toggl can be used for more than just work, every entry you wan't to sync must have **JIRA** tag
+Because Toggl can be used for more than just work, every entry you wan't to sync must have **JIRA** tag, name beginning with issue key
 and (any) project associated.
 
 Now just call the app: *https://{app_location}?token={SECURITY_TOKEN}* and your time entries will be synced.
