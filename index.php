@@ -83,7 +83,12 @@ foreach ($issueEntries as $issueKey => $entries) {
 	foreach ($entries as $entry) {
 		list($entryId, $duration, $started) = [$entry->id, $entry->duration, $entry->start];
 
-		if(in_array($entryId, $loggedEntries) || $duration < 60) {
+		if($duration < 60) {
+			echo "Entry below one minute, skipping...";
+			continue;
+		}
+
+		if(in_array($entryId, $loggedEntries)) {
 			// Skip already logged entries
 			echo "Entry #$entryId already logged, skipping...<br>";
 			continue;
