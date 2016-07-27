@@ -103,7 +103,7 @@ foreach ($issueEntries as $issueKey => $entries) {
 			continue;
 		}
 
-		$comment = " (Toggl #$entryId)";
+		$comment = (isset($entry->description) ? $entry->description : '') ." (Toggl #$entryId)";
 		$comment = trim($comment);
 
 
