@@ -93,7 +93,7 @@ foreach ($issueEntries as $issueKey => $entries) {
 		list($entryId, $duration, $started) = [$entry->id, $entry->duration, $entry->start];
 
 		if($duration < 60) {
-			echo "Entry below one minute, skipping...";
+			echo "Entry below one minute, skipping...<br>";
 			continue;
 		}
 
