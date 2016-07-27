@@ -2,6 +2,9 @@
 
 use GuzzleHttp\Client;
 
+set_time_limit(300);
+date_default_timezone_set('Europe/Prague');
+
 if(!isset($_GET['token']) || $_GET['token'] != getenv('SECURITY_TOKEN')) {
 	http_response_code(401);
 	echo 'Unauthorized';
