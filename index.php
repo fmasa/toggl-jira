@@ -66,7 +66,16 @@ $jiraClient = new Client([
 ]);
 
 foreach ($issueEntries as $issueKey => $entries) {
-	$issue = json_decode($jiraClient->get('issue/' . $issueKey)->getBody());
+	try {
+		$issue = json_decode($jiraClient->get('issue/' . $issueKey)->getBody());
+	} catch(\GuzzleHttp\Exception\ClientException $e) {
+		if($e->getCode() == 404) {
+			echo "Issue $issueKey not found.";
+			continue;
+		} else {
+			throw $e;
+		}
+	}
 
 	$loggedEntries = [];
 	foreach ($issue->fields->worklog->worklogs as $logEntry) {
@@ -96,6 +105,7 @@ foreach ($issueEntries as $issueKey => $entries) {
 
 		$comment = " (Toggl #$entryId)";
 		$comment = trim($comment);
+
 
 		$jiraClient->post('issue/' . $issueKey . '/worklog', [
 			'json' => [
