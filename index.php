@@ -80,13 +80,13 @@ foreach ($issueEntries as $issueKey => $entries) {
 	foreach ($entries as $entry) {
 		list($entryId, $duration, $started) = [$entry->id, $entry->duration, $entry->start];
 
-		if(in_array($entryId, $loggedEntries)) {
+		if(in_array($entryId, $loggedEntries) || $duration < 60) {
 			// Skip already logged entries
 			echo "Entry #$entryId already logged, skipping...<br>";
 			continue;
 		}
 
-		$comment = (isset($entry->description) ? $entry->description : '') ." (Toggl #$entryId)";
+		$comment = " (Toggl #$entryId)";
 		$comment = trim($comment);
 
 		$jiraClient->post('issue/' . $issueKey . '/worklog', [
