@@ -23,6 +23,7 @@ You can use environment variables to configure app with your Toggl and JIRA cred
 - **SECURITY_TOKEN** - Token used for app authorization.
 - **TOGGL_CLIENT_ID** - Your client ID in Toggl.
 - **TOGGL_TOKEN** - Your auth token for Toggl.
+- **ERROR_WEBHOOK** (optional) - URL to be called on error.
 
 ## How can I sync those entries to JIRA?
 Because Toggl can be used for more than just work, every entry you wan't to sync must have **JIRA** tag, name beginning with issue key

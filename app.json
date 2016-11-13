@@ -22,6 +22,10 @@
 		},
 		"TOGGL_TOKEN": {
 			"description": "Your auth token for Toggl."
+		},
+		"ERROR_WEBHOOK": {
+			"description": "URL to be called on error.",
+			"required": false
 		}
 	}
 }
