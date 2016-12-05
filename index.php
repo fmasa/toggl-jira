@@ -116,7 +116,7 @@ $togglClientId = getenv('TOGGL_CLIENT_ID');
 	{
 		foreach ($issueEntries as $issueKey => $entries) {
 			try {
-				$issue = json_decode($this->jira->get('issue/' . $issueKey)->getBody());
+				$issue = json_decode($this->jira->get("issue/$issueKey/worklog")->getBody());
 			} catch (\GuzzleHttp\Exception\ClientException $e) {
 				if ($e->getCode() == 404) {
 					echo "Issue $issueKey not found.";
@@ -127,7 +127,7 @@ $togglClientId = getenv('TOGGL_CLIENT_ID');
 			}
 
 			$loggedEntries = [];
-			foreach ($issue->fields->worklog->worklogs as $logEntry) {
+			foreach ($issue->worklogs as $logEntry) {
 				if (!isset($logEntry->comment)) {
 					continue; // Skip entries without comment
 				}
