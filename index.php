@@ -2,6 +2,9 @@
 
 use GuzzleHttp\Client;
 
+error_reporting(E_ALL);
+
+ini_set('display_errors', 1);
 set_time_limit(300);
 date_default_timezone_set('Europe/Prague');
 
@@ -27,14 +30,10 @@ $togglClientId = getenv('TOGGL_CLIENT_ID');
 	/** @var Client */
 	private $jira;
 
-	/** @var string|NULL */
-	private $errorWebhook;
-
 	/**
 	 *  constructor.
-	 * @param string|NULL $errorWebhook
 	 */
-	public function __construct($errorWebhook)
+	public function __construct()
 	{
 		$togglToken = getenv('TOGGL_TOKEN');
 		$togglClientId = getenv('TOGGL_CLIENT_ID');
@@ -53,11 +52,18 @@ $togglClientId = getenv('TOGGL_CLIENT_ID');
 			'base_uri' => $jiraHost.'/rest/api/2/',
 			'auth' => [$jiraUsername, $jiraPassword],
 		]);
-
-		$this->errorWebhook = getenv('ERROR_WEBHOOK');
 	}
 
-	private function getTogglIssueEntries()
+	private function getDate($daysBack) : string
+	{
+		$dt = new DateTime();
+		if($daysBack > 0) {
+			$dt->modify('-' . $daysBack . 'days');
+		}
+		return $dt->format('c');
+	}
+
+	private function getTogglIssueEntries(int $daysBack)
 	{
 		$projectsData = json_decode($this->toggl->get('clients/' . $this->togglClientId . '/projects')->getBody());
 
@@ -68,7 +74,15 @@ $togglClientId = getenv('TOGGL_CLIENT_ID');
 
 		$projectIds = array_keys($projects);
 
-		$entries = json_decode($this->toggl->get('time_entries')->getBody());
+		$uri = 'time_entries';
+
+		if($daysBack != 0) {
+			$uri .= '?' . http_build_query([
+					'start_date' => $this->getDate($daysBack),
+					'end_date' => $this->getDate($daysBack - 14),
+				]);
+		}
+		$entries = json_decode($this->toggl->get($uri)->getBody());
 
 		$issueEntries = [];
 
@@ -157,18 +171,20 @@ $togglClientId = getenv('TOGGL_CLIENT_ID');
 
 	/**
 	 * Sync Toggl entries with JIRA worklogs
+	 * @param string|NULL $errorWebhook
+	 * @param int $daysBack specifies logging interval
 	 * @throws Exception
 	 */
-	public function sync()
+	public function sync(string $errorWebhook, int $daysBack)
 	{
 		try {
-			$this->logEntries($this->getTogglIssueEntries());
+			$this->logEntries($this->getTogglIssueEntries($daysBack));
 		} catch(\Exception $e) {
-			if($this->errorWebhook) {
-				file_get_contents($this->errorWebhook);
+			if($errorWebhook) {
+				file_get_contents($errorWebhook);
 			}
 			throw $e;
 		}
 	}
 
-})->sync();
+})->sync(getenv('ERROR_WEBHOOK'), (int) ($_GET['days_back'] ?? 0));
