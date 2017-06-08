@@ -8,13 +8,17 @@ ini_set('display_errors', 1);
 set_time_limit(300);
 date_default_timezone_set('Europe/Prague');
 
+require_once __DIR__ . '/vendor/autoload.php';
+
+if(is_file(__DIR__ . "/.env")) { // Dev
+	(new \Dotenv\Dotenv(__DIR__))->load();
+}
+
 if(!isset($_GET['token']) || $_GET['token'] != getenv('SECURITY_TOKEN')) {
 	http_response_code(401);
 	echo 'Unauthorized';
 	exit;
 }
-
-require_once __DIR__ . '/vendor/autoload.php';
 
 $togglToken = getenv('TOGGL_TOKEN');
 $togglClientId = getenv('TOGGL_CLIENT_ID');
