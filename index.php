@@ -14,7 +14,7 @@ if(is_file(__DIR__ . "/.env")) { // Dev
 	(new \Dotenv\Dotenv(__DIR__))->load();
 }
 
-if(!isset($_GET['token']) || $_GET['token'] != getenv('SECURITY_TOKEN')) {
+if(!isset($_GET['token']) || $_GET['token'] !== getenv('SECURITY_TOKEN')) {
 	http_response_code(401);
 	echo 'Unauthorized';
 	exit;
@@ -58,7 +58,7 @@ $togglClientId = getenv('TOGGL_CLIENT_ID');
 		]);
 	}
 
-	private function getDate($daysBack) : string
+	private function getDate(int $daysBack) : string
 	{
 		$dt = new DateTime();
 		if($daysBack > 0) {
@@ -69,35 +69,27 @@ $togglClientId = getenv('TOGGL_CLIENT_ID');
 
 	private function getTogglIssueEntries(int $daysBack)
 	{
-		$projectsData = json_decode($this->toggl->get('clients/' . $this->togglClientId . '/projects')->getBody());
+		$options = [];
 
-		$projects = [];
-		foreach ($projectsData as $project) {
-			$projects[$project->id] = $project->name;
+		if($daysBack !== 0) {
+			$options["query"] = [
+				'start_date' => $this->getDate($daysBack),
+				'end_date' => $this->getDate($daysBack - 14),
+			];
 		}
 
-		$projectIds = array_keys($projects);
-
-		$uri = 'time_entries';
-
-		if($daysBack != 0) {
-			$uri .= '?' . http_build_query([
-					'start_date' => $this->getDate($daysBack),
-					'end_date' => $this->getDate($daysBack - 14),
-				]);
-		}
-		$entries = json_decode($this->toggl->get($uri)->getBody());
+		$body = $this->toggl->get('time_entries', $options)->getBody();
+		$entries = json_decode($body);
 
 		$issueEntries = [];
 
 		foreach ($entries as $entry) {
-			$description = isset($entry->description) ? $entry->description : '(no description)';
+			$description = $entry->description ?? '(no description)';
 			$duration = $entry->duration;
-			$projectId = isset($entry->pid) ? $entry->pid : NULL;
+			$projectId = $entry->pid ?? NULL;
 
 			if ($duration < 0 // Entry still running
 				|| $projectId === NULL // No project filled
-				|| !in_array($entry->pid, $projectIds)
 				|| !isset($entry->tags) || !in_array('JIRA', $entry->tags) // Only 'JIRA' tagged issues
 			) { // Different project
 				continue;
@@ -107,10 +99,7 @@ $togglClientId = getenv('TOGGL_CLIENT_ID');
 
 			if ($matches) {
 				$issueKey = $matches[1];
-				$issueEntries[$issueKey] = array_merge(
-					isset($issueEntries[$issueKey]) ? $issueEntries[$issueKey] : [],
-					[$entry]
-				);
+				$issueEntries[$issueKey] = array_merge($issueEntries[$issueKey] ?? [], [$entry]);
 			}
 		}
 		return $issueEntries;
@@ -156,9 +145,8 @@ $togglClientId = getenv('TOGGL_CLIENT_ID');
 					continue;
 				}
 
-				$comment = (isset($entry->description) ? $entry->description : '') . " (Toggl #$entryId)";
+				$comment = ($entry->description ?? '') . " (Toggl #$entryId)";
 				$comment = trim($comment);
-
 
 				$this->jira->post('issue/' . $issueKey . '/worklog', [
 					'json' => [
