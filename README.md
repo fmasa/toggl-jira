@@ -10,7 +10,7 @@ Deploy this app on Heroku.
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/fmasa/toggl-jira/tree/master)
 
-or host the app yourself (PHP 5.5+ and cURL required).
+or host the app yourself (PHP 7.1+ and cURL required).
 
 ## How can I configure the app?
 You can use environment variables to configure app with your Toggl and JIRA credentials (Heroku will ask you for those).
