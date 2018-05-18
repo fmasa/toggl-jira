@@ -95,7 +95,7 @@ $togglClientId = getenv('TOGGL_CLIENT_ID');
 				continue;
 			}
 
-			preg_match('#([A-Z]{2,3}-[0-9]*) #', $description, $matches);
+			preg_match('#(^[A-Z]*-[0-9]*) #', $description, $matches);
 
 			if ($matches) {
 				$issueKey = $matches[1];
